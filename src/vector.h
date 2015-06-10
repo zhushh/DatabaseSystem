@@ -23,7 +23,7 @@ class Vector {
     	void pop_back();
 
     	T& operator[](int index) const;
-    	Vector<T>& operator =(const Vector<T>& v);
+    	const Vector<T>& operator =(const Vector<T>& v);
     private:
     	int maxSize;
     	int _size;
@@ -34,7 +34,7 @@ class Vector {
 
 template <typename T>
 Vector < T >::Vector(int s) {
-    maxSize = (s <= 0 ? 1 : s);
+    maxSize = s;
     _size = 0;
     data = new T[maxSize];
 }
@@ -112,12 +112,10 @@ T& Vector < T >::operator[](int index) const {    // 返回值使用引用是为
 }
 
 template <typename T>
-Vector<T>& Vector < T >::operator =(const Vector<T>& v) {
-    Vector < T > *temp;
-    temp = new Vector < T >;
-    temp->maxSize = v.maxSize;
-    for (int i = 0; i < v._size; ++i) {
-        temp->push_back(v.data[i]);
+const Vector<T>& Vector < T >::operator =(const Vector<T>& v) {
+    _size = 0;
+    for (int i = 0; i < v._size; i++) {
+        push_back(v.data[i]);
     }
     return v;
 }
