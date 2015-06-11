@@ -13,7 +13,6 @@
 #include "check.h"
 #include "find.h"
 #include "catalog.h"
-#include "catalog.cpp"
 
 // define bool for C language file
 #ifndef __cplusplus
@@ -26,9 +25,6 @@ typedef enum bool {
 const int NAMESIZE = 1024;
 
 void showHelp() {
-	printf("Welcome using this Application made by our team.\n");
-	printf("The next just show the Application's manual.\n");
-	printf("Best wish.\n\n");
 	printf("---------------------------------------------------------------\n");
 	printf("\thelp          -- print manual.\n");
 	printf("\t ?            -- print manual\n");
@@ -39,6 +35,13 @@ void showHelp() {
 	printf("---------------------------------------------------------------\n");
 }
 
+void startShow() {
+	printf("Welcome using this Application made by our team.\n");
+	printf("The next just show the Application's manual.\n");
+	printf("Best wish.\n\n");
+	showHelp();
+}
+
 bool read_key_name_and_value(char *name, char *value);
 
 int main() {
@@ -46,7 +49,8 @@ int main() {
 	char filename[NAMESIZE];
 	char keyName[100];
 	char keyValue[100];
-	showHelp();
+	Catalog *catalog = Catalog::getCatalogInstance();	// read/create catalog
+	startShow();
 	printf(">> ");
 	while (scanf("%s", cmd) != EOF) {
 		if (strncmp("?", cmd, sizeof("?")) == 0) {
@@ -73,6 +77,7 @@ int main() {
 		}
 		printf(">> ");
 	}
+	delete catalog;		// write catalog to file catalog for next time using.
     return 0;
 }
 

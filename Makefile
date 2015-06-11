@@ -1,15 +1,21 @@
-CC=g++
-VPATH=src
-OBJECTS=app.o String.o vector.o
+DIR_SRC =./src
+DIR_OBJ = ./obj
+DIR_BIN = ./bin
 
-app: $(OBJECTS)
-	$(CC) $(OBJECTS) -o
-app.o: app.cpp
-	$(CC) app.cpp -c
-String.o: String.h String.cpp
-	$(CC) String.h String.cpp -c
-vector.o: vector.h
-	$(CC) vector.h -c
+SRC = $(wildcard $(DIR_SRC)/*.cpp)
+OBJ = $(patsubst %.cpp,$(DIR_OBJ)/%.o,$(notdir $(SRC)))
 
+TARGET = app
+BIN_TARGET = $(DIR_BIN)/$(TARGET)
+CC = g++
+CFLAGS = -g -Wall -I$(DIR_SRC)
+
+$(BIN_TARGET): $(OBJ)
+	$(CC) $(OBJ) -o $@
+
+$(DIR_OBJ)/%.o: $(DIR_SRC)/%.cpp
+	$(CC) $(CFLAGS) -c $< -o $@
+
+.PHONY:clean
 clean:
-	rm *.h.gch *.o
+	rm -rf $(DIR_OBJ)/*.o $(BIN_TARGET)

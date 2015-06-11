@@ -35,8 +35,6 @@ typedef struct _Catalog_data {
 TypeName(const TypeName& ); \
 TypeName& operator=(const TypeName&)
 
-const char* CATALOG_FILE = "catalog";
-
 class Catalog {
     public:
         // 用于获取catalog对象的操作句柄

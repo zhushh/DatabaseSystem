@@ -9,14 +9,13 @@
 #define _CHECK_H
 
 #include "catalog.h"
-#include "catalog.cpp"
 #include "vector.h"
 
 #include <stdio.h>
 
 char types[][30] = {
 	{"INT"}, {"BOOL"}, {"STRING"}, {"NESTEDINT"},
-	{"NESTEDSTR"}, {"NESTEDOBJ"}, {"NESTEDARR"}
+	{"NESTEDSTR"}, {"NESTEDOBJ"}, {"NESTEDARR"}, {"UNKNOWN"}
 };
 
 char* output_type(KEY_TYPE type) {
@@ -34,6 +33,8 @@ char* output_type(KEY_TYPE type) {
 		return types[5];
 	} else if (type == NESTEDARR) {
 		return types[6];
+	} else {
+		return types[7];
 	}
 }
 
@@ -52,6 +53,9 @@ void showCatalog() {
 		printf("%20s", v[i].key_name);
 		printf("%12s", output_type(v[i].key_type));
 		printf("%10d\n", v[i].count);
+	}
+	if (size == 0) {
+		printf("NONE\n");
 	}
 	printf("\n");
 }

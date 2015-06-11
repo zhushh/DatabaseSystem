@@ -12,6 +12,11 @@
 #include <string.h>
 #include "catalog.h"
 
+#ifndef CATALOG_DEFAULT_FILE
+#define CATALOG_DEFAULT_FILE
+const char* CATALOG_FILE = "catalog";
+#endif
+
 Catalog* Catalog::instance_ = NULL;
 bool Catalog::isDirty = false;
 int Catalog::key_id_count = 0;
@@ -130,7 +135,7 @@ Catalog::Catalog() {
 bool Catalog::readFromFile(const char *src_file) {
 	FILE *fp;
 	if ((fp = fopen(src_file, "rw+")) == NULL) {
-		fprintf(stderr, "%s can't open!\n", src_file);
+		//fprintf(stderr, "%s can't open!\n", src_file);
 		return false;
 	} else {
 		Catalog_data dat;
@@ -138,13 +143,6 @@ bool Catalog::readFromFile(const char *src_file) {
 			v.push_back(dat);
 			key_id_count++;
 		}
-//		while (fread(&(dat.id), sizeof(dat.id), 1, fp)) {
-//			fread(dat.key_name, sizeof(dat.key_name), 1, fp);
-//			fread(&(dat.key_type), sizeof(dat.key_type), 1, fp);
-//			fread(&(dat.count), sizeof(dat.count), 1, fp);
-//			v.push_back(dat);
-//			key_id_count++;
-//		}
 		fclose(fp);
 		return true;
 	}
@@ -159,10 +157,6 @@ bool Catalog::writeToFile(const char *src_file) {
 		int size = v.size();
 		for (int i = 0; i < size; i++) {
 			fwrite(&(v[i]), sizeof(v[i]), 1, fp);
-//			fwrite(&(v[i].id), sizeof(v[i].id), 1, fp);
-//			fwrite(v[i].key_name, sizeof(v[i].key_name), 1, fp);
-//			fwrite(&(v[i].key_type), sizeof(v[i].key_type), 1, fp);
-//			fwrite(&(v[i].count), sizeof(v[i].count), 1, fp);
 		}
 		fclose(fp);
 		return true;
