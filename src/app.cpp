@@ -3,7 +3,7 @@
  > Author: zhushh
  > Mail: 
  > Created Time: Mon 08 Jun 2015 02:51:53 PM CST
- ************************************************************************/
+*************************************************************************/
 
 #include <stdio.h>
 #include <ctype.h>
@@ -13,6 +13,9 @@
 #include "check.h"
 #include "find.h"
 #include "catalog.h"
+
+#include "insert.h"
+#include "recovery_data.h"
 
 // define bool for C language file
 #ifndef __cplusplus
@@ -61,19 +64,23 @@ int main() {
 			break;
 		} else if (strncmp("insert", cmd, sizeof("insert")) == 0) {
 			scanf("%s", filename);
-			// to-do
+			printf("Inserting %s ...\n", filename);
+			insert(filename);
 		} else if (strncmp("check", cmd, sizeof("check")) == 0) {
 			char ch;
 			while ((ch = getchar()) != '\n') ;
 			showCatalog();
 		} else if (strncmp("find", cmd, sizeof("find")) == 0) {
 			if (!read_key_name_and_value(keyName, keyValue)) {
-				printf("Invalid command!\n");
+				// printf("Invalid command!\n");
+				// for testing of showing recovery data
 			} else {
 				// to-do
 				printf("keyName == %s\n", keyName);
 				printf("keyValue == %s\n", keyValue);
 			}
+		} else if (strncmp("json", cmd, sizeof("json")) == 0) {
+			recovery_data();
 		}
 		printf(">> ");
 	}
@@ -96,7 +103,7 @@ bool read_key_name_and_value(char *name, char *value) {
 		}
 		*name = '\0';
 
-		// find the sign of equal and skip it
+		// find the sign of equal
 		if (ch == '\"') {
 			while ((ch = getchar()) != '=' && ch != '\n');
 		} else if (ch != '=') {
@@ -109,7 +116,6 @@ bool read_key_name_and_value(char *name, char *value) {
 		} else {
 			while (isblank(ch = getchar()) || ch == '\"');
 			if (ch == '\n') {
-				while (ch != '\n') ch = getchar();	// clear buffer
 				return false;
 			} else {
 				*value++ = ch;

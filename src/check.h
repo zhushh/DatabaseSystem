@@ -8,10 +8,12 @@
 #ifndef _CHECK_H
 #define _CHECK_H
 
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
 #include "catalog.h"
 #include "vector.h"
-
-#include <stdio.h>
 
 char types[][30] = {
 	{"INT"}, {"BOOL"}, {"STRING"}, {"NESTEDINT"},
@@ -27,7 +29,7 @@ char* output_type(KEY_TYPE type) {
 		return types[2];
 	} else if (type == NESTEDINT) {
 		return types[3];
-	} else if (type == NESTSTR) {
+	} else if (type == NESTEDSTR) {
 		return types[4];
 	} else if (type == NESTEDOBJ) {
 		return types[5];

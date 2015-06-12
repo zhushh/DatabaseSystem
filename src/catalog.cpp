@@ -134,7 +134,7 @@ Catalog::Catalog() {
 
 bool Catalog::readFromFile(const char *src_file) {
 	FILE *fp;
-	if ((fp = fopen(src_file, "rw+")) == NULL) {
+	if ((fp = fopen(src_file, "r+")) == NULL) {
 		//fprintf(stderr, "%s can't open!\n", src_file);
 		return false;
 	} else {

@@ -8,12 +8,12 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
-#define SIZE 1
+#define VECTOR_DEFAULT_SIZE 10
 
 template<typename T>
 class Vector {
     public:
-    	explicit Vector(int s = SIZE);
+    	explicit Vector(int s = VECTOR_DEFAULT_SIZE);
     	~Vector();
     	Vector(const Vector<T>& v);
     	int size() const;
