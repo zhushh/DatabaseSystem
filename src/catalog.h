@@ -8,7 +8,7 @@
 #ifndef _CATALOG_H
 #define _CATALOG_H
 
-#include <cstring>
+#include <string.h>
 #include "vector.h"
 
 // the KEY_TYPE is useful for catalog file

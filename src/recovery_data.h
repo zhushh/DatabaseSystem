@@ -13,7 +13,7 @@
 #include <string.h>
 
 #include "buffer.h"     // for buffer_read
-#include "record.h"     // for struct _Record
+#include "record_data.h"     // for struct _Record
 #include "catalog.h"    // for KEY_TYPE & Catalog_data info
 
 static Catalog *recovery_ctlog = Catalog::getCatalogInstance();
@@ -53,7 +53,6 @@ void print_value(const char *src, KEY_TYPE type, int size) {
 }
 
 void show_record(Record &t) {
-    // to-do
     putchar('{');
     Catalog_data dat;
     for (int i = 0; i < t.attrNum; i++) {
@@ -64,6 +63,7 @@ void show_record(Record &t) {
             size = t.offs[i+1] - t.offs[i];
             print_value(t.data + t.offs[i], dat.key_type, size);
             putchar(',');
+            putchar(' ');
         } else {
             size = t.len - t.offs[i];
             print_value(t.data + t.offs[i], dat.key_type, size);
@@ -73,8 +73,9 @@ void show_record(Record &t) {
 }
 
 void recovery_data() {
+    buffer_start();
     Record t;
-    while (buffer_read(&(t.attrNum), sizeof(t.attrNum))) {
+    while (buffer_read(&(t.attrNum), sizeof(t.attrNum)) && t.attrNum > 0) {
         int j, num;
         for (j = 0; j < t.attrNum; j++) {
             buffer_read(&num, sizeof(int));
@@ -91,6 +92,7 @@ void recovery_data() {
         t.aids.clear();
         t.offs.clear();
     }
+    buffer_end();
 }
 
 #endif

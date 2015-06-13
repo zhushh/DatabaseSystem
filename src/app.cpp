@@ -13,7 +13,6 @@
 #include "check.h"
 #include "find.h"
 #include "catalog.h"
-
 #include "insert.h"
 #include "recovery_data.h"
 
@@ -47,7 +46,7 @@ void startShow() {
 
 bool read_key_name_and_value(char *name, char *value);
 
-int main() {
+int main(int argc, char **argv) {
 	char cmd[50];
 	char filename[NAMESIZE];
 	char keyName[100];
@@ -67,13 +66,11 @@ int main() {
 			printf("Inserting %s ...\n", filename);
 			insert(filename);
 		} else if (strncmp("check", cmd, sizeof("check")) == 0) {
-			char ch;
-			while ((ch = getchar()) != '\n') ;
+			scanf("%s", filename);
 			showCatalog();
 		} else if (strncmp("find", cmd, sizeof("find")) == 0) {
 			if (!read_key_name_and_value(keyName, keyValue)) {
-				// printf("Invalid command!\n");
-				// for testing of showing recovery data
+				printf("Invalid command!\n");
 			} else {
 				// to-do
 				printf("keyName == %s\n", keyName);
@@ -90,42 +87,50 @@ int main() {
 
 bool read_key_name_and_value(char *name, char *value) {
 	char ch;
-	while (isblank((ch = getchar())) || ch == '\"');	// skip blank & '"'
-
-	// check valid and read key name
-	if (ch == '=') {
-		while (ch != '\n') ch = getchar();	// clear buffer
-		return false;
-	} else {
-		*name++ = ch;
-		while (!isblank((ch = getchar())) && ch != '\"' && ch != '=') {
+	// read key name
+	while (isblank((ch = getchar())));	// skip blank 
+	if (ch == '\"') {
+		while ((ch = getchar()) != '\"' && ch != '\n') {
 			*name++ = ch;
 		}
 		*name = '\0';
-
-		// find the sign of equal
-		if (ch == '\"') {
-			while ((ch = getchar()) != '=' && ch != '\n');
-		} else if (ch != '=') {
-			while ((ch = getchar()) != '=' && ch != '\n');
+	} else if (ch == '\'') {
+		while ((ch = getchar()) != '\'' && ch != '\n') {
+			*name++ = ch;
 		}
-		// check valid and start read key value
-		if (ch != '=') {
-			while (ch != '\n') ch = getchar();	// clear buffer
-			return false;
-		} else {
-			while (isblank(ch = getchar()) || ch == '\"');
-			if (ch == '\n') {
-				return false;
-			} else {
-				*value++ = ch;
-				while (!isblank((ch = getchar())) && ch != '\"' && ch != '\n') {
-					*value++ = ch;
-				}
-				*value = '\0';
-			}
+		*name = '\0';
+	} else if (ch != '\n') {
+		*name++ = ch;
+		while (!isblank((ch = getchar())) && ch != '=' && ch != '\n') {
+			*name++ = ch;
 		}
+		*name = '\0';
 	}
-	while (ch != '\n') ch = getchar();	// clear buffer
+	// check
+	if (ch == '\n') return false;
+	if (ch != '=') while (isblank((ch = getchar())));
+	if (ch != '=') return false;
+	// read value
+	while (isblank(ch = getchar()));
+	if (ch == '\"') {
+		while ((ch = getchar()) != '\"' && ch != '\n') {
+			*value++ = ch;
+		}
+		*value = '\0';
+	} else if (ch == '\'') {
+		while ((ch = getchar()) != '\'' && ch != '\n') {
+			*value++ = ch;
+		}
+		*value = '\0';
+	} else if (ch != '\n') {
+		*value++ = ch;
+		while (!isblank((ch = getchar())) && ch != '\n') {
+			*value++ = ch;
+		}
+		*value = '\0';
+	} else {
+		return false;
+	}
+	while (ch != '\n') ch = getchar();
 	return true;
 }

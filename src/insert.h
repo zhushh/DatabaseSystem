@@ -6,7 +6,8 @@
 #include <stdlib.h>
 
 #include "buffer.h"
-#include "record.h"
+#include "extract.h"
+#include "record_data.h"
 #include "catalog.h"
 
 #define STR_MAXSIZE 4096
@@ -28,17 +29,19 @@ void changeToRecord(const char *src, Record &t) {
 			t.offs.push_back(t.len);
 			// extract data
 			if (type == INT) {
-				i += extract_int(src, t.data+t.len, i);
+				i += extract_int(src, t.data+t.len, t.len, i);
 			} else if (type == BOOL) {
-				i += extract_bool(src, t.data+t.len, i);
+				i += extract_bool(src, t.data+t.len, t.len, i);
 			} else if (type == STRING) {
-				i += extract_string(src, t.data+t.len, i);
+				i += extract_string(src, t.data+t.len, t.len, i);
 			} else if (type == NESTEDARR) {
-				i += extract_nested_arr(src, t.data+t.len, i);
+				i += extract_nested_arr(src, t.data+t.len, t.len, i);
 			} else {		// type is NESTED_OBJ
-				i += extract_nested_obj(src, t.data+t.len, i);
+				i += extract_nested_obj(src, t.data+t.len, t.len, i);
 			}
-			t.len = strlen(t.data);
+			// 拷贝int类型时会有,int转为char后最高位的'\0'会被拷贝到data当中
+			// 所以下面语句会导致t.len与实际长度不符合
+			// t.len = strlen(t.data);
 		} else {	// remember increase the i if nothing to do
 			i++;
 		}
@@ -67,14 +70,20 @@ bool insert(const char *filename) {
 		fprintf(stderr, "%s can't open!\n", filename);
 		return false;
 	}
+	buffer_start();
 	char src[STR_MAXSIZE];
 	while (fgets(src, sizeof(src), fp) != NULL) {
-		Record t;
-		t.attrNum = t.len = 0;
-		changeToRecord(src, t);
-		writeRecordToBuffer(t);
+		if (src[0] == '{') {
+			Record t;
+			t.attrNum = t.len = 0;
+			changeToRecord(src, t);
+			writeRecordToBuffer(t);
+			t.aids.clear();
+			t.offs.clear();
+		}
 	}
     buffer_flush();     // write the data in last page
+    buffer_end();
 	return true;
 }
 
