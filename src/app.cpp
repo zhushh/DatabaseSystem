@@ -73,8 +73,9 @@ int main(int argc, char **argv) {
 				printf("Invalid command!\n");
 			} else {
 				// to-do
-				printf("keyName == %s\n", keyName);
-				printf("keyValue == %s\n", keyValue);
+				// printf("keyName == %s\n", keyName);
+				// printf("keyValue == %s\n", keyValue);
+                find(keyName, keyValue);
 			}
 		} else if (strncmp("json", cmd, sizeof("json")) == 0) {
 			recovery_data();

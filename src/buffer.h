@@ -24,14 +24,13 @@ static char buffer[PAGE_SIZE+1];
 static char *bufptr = buffer;
 static char *bufend = buffer + PAGE_SIZE;
 static bool isReading = false;
-static long current_page = -1;
-static long page_counts = 0;
+static int current_page_num = -1;
 static FILE *fp = NULL;
 
 // declare function
 void buffer_start();
 void buffer_end();
-void buffer_flush();
+void buffer_save();
 void buffer_write(const void*, int);
 bool buffer_read_page(int);
 bool buffer_read(void *, int);
@@ -43,13 +42,14 @@ void buffer_start() {
         if ((fp = fopen(source_file, "rb+")) == NULL) {
             // fprintf(stderr, "Error, buffer_start, while open!\n");
             // exit(1);
-            // if no exist source file, then create one
+            // if no exist source file, then create a new one
             if ((fp = fopen(source_file, "wb+")) == NULL) {
                 fprintf(stderr, "Error, buffer_start, while open!\n");
                 exit(1);
             } else {
                 isReading = false;
                 bufptr = buffer;
+                bufend = buffer + PAGE_SIZE;
                 return;
             }
         }
@@ -64,7 +64,7 @@ void buffer_start() {
             }
         }
         bufend = buffer + PAGE_SIZE - 1;
-        while (*bufend == 0 && bufend - buffer > 0) --bufend;
+        while ((*bufend) == 0 && bufend - buffer > 0) bufend--;
         if (bufend - buffer > 0) ++bufend;
     }
 }
@@ -72,27 +72,24 @@ void buffer_start() {
 void buffer_end() {
     if (fp != NULL) {
         if (!isReading) {
-            buffer_flush();
+            buffer_save();
         }
         fclose(fp);
         fp = NULL;
     }
 }
 
-void buffer_flush() {
+void buffer_save() {
     if (isReading) {
         return ;
     } else if (bufptr != buffer) {
-        if (bufptr - buffer != PAGE_SIZE) {     // clear buffer
-            int clear_size = PAGE_SIZE - (bufptr - buffer);
-            int i;
-            for (i = 0; i < clear_size; i++) {
-                bufptr[i] ^= bufptr[i];
-            }
-        }
-        fseek(fp, -(PAGE_SIZE - (bufend - buffer)), SEEK_END);
+    	int clear_size = PAGE_SIZE - (bufptr - buffer);
+    	while (clear_size-- > 0) {
+    		bufptr[clear_size] ^= bufptr[clear_size];
+    	}
+    	fseek(fp, ((bufend - buffer) - PAGE_SIZE), SEEK_END);
         if (fwrite(buffer, PAGE_SIZE, 1, fp) != 1) {
-            fprintf(stderr, "Error, buffer_flush, while writing!\n");
+            fprintf(stderr, "Error, buffer_save, while writing!\n");
             exit(1);
         }
         bufend = bufptr;
@@ -109,7 +106,7 @@ void buffer_write(const void *src, int size) {
     while (size + (bufptr - buffer) >= PAGE_SIZE) {
         int len = PAGE_SIZE - (bufptr - buffer);
         bufptr = mempcpy(bufptr, ptr, len);
-        buffer_flush();
+        buffer_save();
         ptr += len;
         size -= len;
     }
@@ -118,30 +115,29 @@ void buffer_write(const void *src, int size) {
     }
 }
 
-// page number start from 0
-bool buffer_read_page(long pnum) {
+bool buffer_read_page(int pnum) {
     if (!isReading) {
-        buffer_flush();
+        buffer_save();      // keep data consistent
         isReading = true;
     }
     fseek(fp, 0L, SEEK_END);
     long pos = ftell(fp);
     if (pos == -1L) {
-        fprintf(stderr, "Error, buffer_read_page, while get position!\n");
+        fprintf(stderr, "Error, buffer_read_page, while getting position!\n");
         exit(1);
     }
-    page_counts = pos / PAGE_SIZE + (pos % PAGE_SIZE == 0 ? 0 : 1);
-    if (pnum < 0 || pnum > page_counts) {
+    int pages = pos/(PAGE_SIZE) + (pos%(PAGE_SIZE) == 0? 0 : 1);
+    if (pnum < 0 || pnum > pages) {
         return false;
     } else {
-        fseek(fp, (pnum*PAGE_SIZE), SEEK_SET);
+        fseek(fp, (pnum*(PAGE_SIZE)), SEEK_SET);
         if (fread(buffer, PAGE_SIZE, 1, fp) != 1) {
             if (!feof(fp)) {
                 fprintf(stderr, "Error, buffer_read_page, while reading!\n");
                 exit(1);
             }
         }
-        current_page = pnum;    // set current page as pnum
+        current_page_num = pnum;
         bufptr = buffer;
         return true;
     }
@@ -149,18 +145,17 @@ bool buffer_read_page(long pnum) {
 
 bool buffer_read(void *dest, int size) {
     if (!isReading) {
-        buffer_flush();
+        buffer_save();
         isReading = true;
-        current_page = 0;
-        buffer_read_page(current_page);
+        buffer_read_page(0);     // start reading from the 0th page
     }
     char *ptr = (char*)dest;
     while (size + (bufptr - buffer) >= PAGE_SIZE) {
         int len = PAGE_SIZE - (bufptr - buffer);
-        ptr = mempcpy(ptr, bufptr, size);
+        ptr = mempcpy(ptr, bufptr, len);
         size -= len;
         bufptr += len;
-        if (!buffer_read_page(++current_page)) {
+        if (!buffer_read_page(++current_page_num)) {
             return false;
         }
     }
