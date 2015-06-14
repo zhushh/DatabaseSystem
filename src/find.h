@@ -44,9 +44,7 @@ bool is_equal(const void *a, const void *b) {
 }
 
 void find(const char *key, const char *value) {
-#ifdef DEBUG
     int count = 1;
-#endif
     Vector<Catalog_data> vv;
     // the find function will return the increasing catalog data sorted by id
     find_ctlog->find(key, vv);
@@ -74,9 +72,7 @@ void find(const char *key, const char *value) {
             buffer_read(t.data, t.len);
             if (isFound) {
                 if (is_equal(value, t.data+t.offs[index])) {
-                    #ifdef DEBUG
-                        printf("%d\t\n", count++);
-                    #endif
+                    printf("%d\t\n", count++);
                     show_record(t);
                 }
             }

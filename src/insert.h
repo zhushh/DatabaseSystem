@@ -39,8 +39,8 @@ void changeToRecord(const char *src, Record &t) {
 			} else {		// type is NESTED_OBJ
 				i += extract_nested_obj(src, t.data+t.len, t.len, i);
 			}
-			// 拷贝int类型时会有,int转为char后最高位的'\0'会被拷贝到data当中
-			// 所以下面语句会导致t.len与实际长度不符合
+			// 拷贝int类型时会有,int转为char后较高的byte转换成char后可能是'\0',
+			// 所以下面语句会导致t.len与实际长度不符合,因此直接在函数调用内部修改len参数
 			// t.len = strlen(t.data);
 		} else {	// remember increase the i if nothing to do
 			i++;
@@ -51,27 +51,16 @@ void changeToRecord(const char *src, Record &t) {
 // 把一条Record格式的数据写入到buffer中
 // buffer会自动以8k大小写成一个页面
 void writeRecordToBuffer(Record &t) {
-	//FILE *ff;
-	//if ((ff = fopen("write_record_history", "a+")) == NULL) {
-	//	if ((ff = fopen("write_record_history", "w+")) == NULL) {
-	//		return;
-	//	}
-	//}
 	buffer_write(&(t.attrNum), sizeof(t.attrNum));
-	//fprintf(ff, "attrNum = %d, ", t.attrNum);
-
 	int size = t.aids.size();
 	for (int i = 0; i < size; i++) {
 		buffer_write(&(t.aids[i]), sizeof(t.aids[i]));
-		//fprintf(ff, "aids[%d] = %d, ", i, t.aids[i]);
 	}
 	size = t.offs.size();
 	for (int i = 0; i < size; i++) {
 		buffer_write(&(t.offs[i]), sizeof(t.offs[i]));
-		//fprintf(ff, "offs[%d] = %d, ", i, t.offs[i]);
 	}
 	buffer_write(&(t.len), sizeof(t.len));
-	//fprintf(ff, "len = %d\n", t.len);
 	buffer_write(t.data, t.len);
 }
 
@@ -81,7 +70,7 @@ bool insert(const char *filename) {
 		fprintf(stderr, "%s can't open!\n", filename);
 		return false;
 	}
-	buffer_start();
+	buffer_start();		// call when using buffer
 	char src[STR_MAXSIZE];
 	while (fgets(src, sizeof(src), fp) != NULL) {
 		if (src[0] == '{') {
@@ -93,8 +82,7 @@ bool insert(const char *filename) {
 			t.offs.clear();
 		}
 	}
-    // buffer_flush();     // write the data in last page
-    buffer_end();
+    buffer_end();		// must call when finishing using buffer
 	return true;
 }
 

@@ -20,7 +20,7 @@ char types[][30] = {
 	{"NESTEDSTR"}, {"NESTEDOBJ"}, {"NESTEDARR"}, {"UNKNOWN"}
 };
 
-char* output_type(KEY_TYPE type) {
+char* check_get_type_name(KEY_TYPE type) {
 	if (type == INT) {
 		return types[0];
 	} else if (type == BOOL) {
@@ -53,7 +53,7 @@ void showCatalog() {
 	for (i = 0; i < size; i++) {
 		printf("%10d", v[i].id);
 		printf("%20s", v[i].key_name);
-		printf("%12s", output_type(v[i].key_type));
+		printf("%12s", check_get_type_name(v[i].key_type));
 		printf("%10d\n", v[i].count);
 	}
 	if (size == 0) {

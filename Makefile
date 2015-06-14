@@ -13,9 +13,9 @@ CFLAGS = -g -Wall -I$(DIR_SRC)
 $(BIN_TARGET): $(OBJ)
 	$(CC) $(OBJ) -o $@
 
-$(DIR_OBJ)/%.o: $(DIR_SRC)/%.cpp
+$(DIR_OBJ)/%.o: $(DIR_SRC)/%.cpp $(DIR_SRC)/*.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
 .PHONY:clean
 clean:
-	rm -rf $(DIR_OBJ)/*.o $(BIN_TARGET)
+	rm -rf $(DIR_OBJ)/*.o $(BIN_TARGET) $(DIR_BIN)/*

@@ -16,42 +16,22 @@
 #include "show_data.h"      // for show_record function
 
 void recovery_data() {
-#ifdef DEBUG
     int count = 1;
-#endif
     buffer_start();
     Record t;
     while (buffer_read(&(t.attrNum), sizeof(t.attrNum)) && t.attrNum > 0) {
         int j, num;
-#ifdef DEBUG
-        printf("Read aids!\n");
-#endif
         for (j = 0; j < t.attrNum; j++) {
             buffer_read(&num, sizeof(int));
             t.aids.push_back(num);
         }
-#ifdef DEBUG
-        printf("Read offs!\n");
-#endif
         for (j = 0; j < t.attrNum; j++) {
             buffer_read(&num, sizeof(int));
             t.offs.push_back(num);
-#ifdef DEBUG
-            printf("offs[%d] = %d\n", j, num);
-#endif
         }
-#ifdef DEBUG
-        printf("Read len!\n");
-#endif
         buffer_read(&(t.len), sizeof(t.len));
-#ifdef DEBUG
-        printf("len = %d\n", t.len);
-        printf("Read data!\n");
-#endif
         buffer_read(t.data, t.len);
-#ifdef DEBUG
         printf("%d\t", count++);
-#endif
         show_record(t);
         t.attrNum = t.len = 0;
         t.aids.clear();
