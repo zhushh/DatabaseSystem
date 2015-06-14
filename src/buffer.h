@@ -19,7 +19,7 @@
 (memcpy((a), (b), (c)) != NULL? (a)+(c) : (a))
 #endif
 
-#define PAGE_SIZE 1024*8
+const int PAGE_SIZE = 1024*8;
 
 static char source_file[] = "serialization.data";
 static char buffer[PAGE_SIZE+1];
@@ -49,18 +49,25 @@ void buffer_start() {
             if ((fp = fopen(source_file, "wb+")) == NULL) {
                 fprintf(stderr, "Error, buffer_start, while open!\n");
                 exit(1);
+            } else {
+                isReading = false;
+                bufptr = buffer;
+                return;
             }
         }
         isReading = false;
         bufptr = buffer;
-        fseek(fp, 0L, SEEK_END);
-        long pos = ftell(fp);
-        if (pos == -1L) {
-            fprintf(stderr, "Error, buffer_read_page, while get position!\n");
-            exit(1);
-        } else {
-            page_counts = pos / PAGE_SIZE + (pos % PAGE_SIZE == 0 ? 0 : 1);
+        // get bufend position
+        fseek(fp, -(PAGE_SIZE), SEEK_END);
+        if (fread(buffer, PAGE_SIZE, 1, fp) != 1) {
+            if (!feof(fp)) {
+                fprintf(stderr, "Error, buffer_start, while reading\n");
+                exit(1);
+            }
         }
+        bufend = buffer + PAGE_SIZE - 1;
+        while (*bufend == 0 && bufend - buffer > 0) --bufend;
+        if (bufend - buffer > 0) ++bufend;
     }
 }
 
@@ -85,7 +92,7 @@ void buffer_flush() {
                 bufptr[i] ^= bufptr[i];
             }
         }
-        fseek(fp, PAGE_SIZE - (bufend - buffer), SEEK_END);
+        fseek(fp, -(PAGE_SIZE - (bufend - buffer)), SEEK_END);
         if (fwrite(buffer, PAGE_SIZE, 1, fp) != 1) {
             fprintf(stderr, "Error, buffer_flush, while writing!\n");
             exit(1);
@@ -159,14 +166,6 @@ bool buffer_read(void *dest, int size) {
             return false;
         }
     }
-//    if (current_page == page_counts) {
-//        if (size > 0 && bufend - bufptr > size) {
-//            memcpy(ptr, bufptr, size);
-//            bufptr += size;
-//        } else if (size > 0) {
-//            return false;
-//        }
-//    } else 
     if (size > 0) {
         memcpy(ptr, bufptr, size);
         bufptr += size;

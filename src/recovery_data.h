@@ -94,7 +94,7 @@ void recovery_data() {
             buffer_read(&num, sizeof(int));
             t.offs.push_back(num);
 #ifdef DEBUG
-            if (count % 19 == 0) {
+            if (count > 73 && count < 77) {
                 printf("offs[%d] = %d\n", j, num);
             }
 #endif
