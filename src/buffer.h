@@ -4,8 +4,6 @@
  > Mail: 
  > Created Time: Fri 12 Jun 2015 08:37:03 PM CST
  ************************************************************************/
-#define DEBUG
-
 #ifndef ZZ_BUFFER_H
 #define ZZ_BUFFER_H
 

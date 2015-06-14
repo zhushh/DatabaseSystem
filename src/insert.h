@@ -51,16 +51,27 @@ void changeToRecord(const char *src, Record &t) {
 // 把一条Record格式的数据写入到buffer中
 // buffer会自动以8k大小写成一个页面
 void writeRecordToBuffer(Record &t) {
+	//FILE *ff;
+	//if ((ff = fopen("write_record_history", "a+")) == NULL) {
+	//	if ((ff = fopen("write_record_history", "w+")) == NULL) {
+	//		return;
+	//	}
+	//}
 	buffer_write(&(t.attrNum), sizeof(t.attrNum));
+	//fprintf(ff, "attrNum = %d, ", t.attrNum);
+
 	int size = t.aids.size();
 	for (int i = 0; i < size; i++) {
 		buffer_write(&(t.aids[i]), sizeof(t.aids[i]));
+		//fprintf(ff, "aids[%d] = %d, ", i, t.aids[i]);
 	}
 	size = t.offs.size();
 	for (int i = 0; i < size; i++) {
 		buffer_write(&(t.offs[i]), sizeof(t.offs[i]));
+		//fprintf(ff, "offs[%d] = %d, ", i, t.offs[i]);
 	}
 	buffer_write(&(t.len), sizeof(t.len));
+	//fprintf(ff, "len = %d\n", t.len);
 	buffer_write(t.data, t.len);
 }
 

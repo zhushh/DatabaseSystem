@@ -4,9 +4,12 @@
  > Mail: 
  > Created Time: Fri 12 Jun 2015 11:18:32 PM CST
  ************************************************************************/
-
 #ifndef _RECOVERY_DATA_H
 #define _RECOVERY_DATA_H
+
+//#ifndef DEBUG
+//#define DEBUG
+//#endif
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -73,7 +76,7 @@ void show_record(Record &t) {
 }
 
 void recovery_data() {
-#ifdef DEBUG
+#ifndef DEBUG
         int count = 1;
 #endif
     buffer_start();
@@ -94,9 +97,7 @@ void recovery_data() {
             buffer_read(&num, sizeof(int));
             t.offs.push_back(num);
 #ifdef DEBUG
-            if (count > 73 && count < 77) {
                 printf("offs[%d] = %d\n", j, num);
-            }
 #endif
         }
 #ifdef DEBUG
@@ -107,13 +108,14 @@ void recovery_data() {
         printf("Read data!\n");
 #endif
         buffer_read(t.data, t.len);
+#ifndef DEBUG
+        printf("%d\t", count);
+        count += 1;
+#endif
         show_record(t);
         t.attrNum = t.len = 0;
         t.aids.clear();
         t.offs.clear();
-#ifdef DEBUG
-        count += 1;
-#endif
     }
     buffer_end();
 }
