@@ -4,6 +4,7 @@
  > Mail: 
  > Created Time: Fri 12 Jun 2015 08:37:03 PM CST
  ************************************************************************/
+#define DEBUG
 
 #ifndef ZZ_BUFFER_H
 #define ZZ_BUFFER_H
@@ -29,8 +30,16 @@ static long current_page = -1;
 static long page_counts = 0;
 static FILE *fp = NULL;
 
+// declare function
+void buffer_start();
+void buffer_end();
+void buffer_flush();
+void buffer_write(const void*, int);
+bool buffer_read_page(int);
+bool buffer_read(void *, int);
+
 // when using buffer, the buffer_start function must be called firstly.
-// and when finished using buffer, should call the buffer_end function.
+// And when finished using buffer, should call the buffer_end function.
 void buffer_start() {
     if (fp == NULL) {
         if ((fp = fopen(source_file, "rb+")) == NULL) {
@@ -44,7 +53,6 @@ void buffer_start() {
         }
         isReading = false;
         bufptr = buffer;
-        bufend = buffer + PAGE_SIZE;
         fseek(fp, 0L, SEEK_END);
         long pos = ftell(fp);
         if (pos == -1L) {
@@ -58,14 +66,25 @@ void buffer_start() {
 
 void buffer_end() {
     if (fp != NULL) {
+        if (!isReading) {
+            buffer_flush();
+        }
         fclose(fp);
+        fp = NULL;
     }
 }
 
 void buffer_flush() {
     if (isReading) {
         return ;
-    } else {
+    } else if (bufptr != buffer) {
+        if (bufptr - buffer != PAGE_SIZE) {     // clear buffer
+            int clear_size = PAGE_SIZE - (bufptr - buffer);
+            int i;
+            for (i = 0; i < clear_size; i++) {
+                bufptr[i] ^= bufptr[i];
+            }
+        }
         fseek(fp, PAGE_SIZE - (bufend - buffer), SEEK_END);
         if (fwrite(buffer, PAGE_SIZE, 1, fp) != 1) {
             fprintf(stderr, "Error, buffer_flush, while writing!\n");
@@ -137,18 +156,18 @@ bool buffer_read(void *dest, int size) {
         size -= len;
         bufptr += len;
         if (!buffer_read_page(++current_page)) {
-            current_page = -1;
             return false;
         }
     }
-    if (current_page == page_counts) {
-        if (size > 0 && bufend - bufptr > 0) {
-            memcpy(ptr, bufptr, size);
-            bufptr += size;
-        } else if (size > 0) {
-            return false;
-        }
-    } else if (size > 0) {
+//    if (current_page == page_counts) {
+//        if (size > 0 && bufend - bufptr > size) {
+//            memcpy(ptr, bufptr, size);
+//            bufptr += size;
+//        } else if (size > 0) {
+//            return false;
+//        }
+//    } else 
+    if (size > 0) {
         memcpy(ptr, bufptr, size);
         bufptr += size;
     }

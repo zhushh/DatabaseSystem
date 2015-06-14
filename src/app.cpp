@@ -78,7 +78,9 @@ int main(int argc, char **argv) {
 			}
 		} else if (strncmp("json", cmd, sizeof("json")) == 0) {
 			recovery_data();
-		}
+		} else {
+            system(cmd);
+        }
 		printf(">> ");
 	}
 	delete catalog;		// write catalog to file catalog for next time using.

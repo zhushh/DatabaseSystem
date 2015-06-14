@@ -82,7 +82,7 @@ bool insert(const char *filename) {
 			t.offs.clear();
 		}
 	}
-    buffer_flush();     // write the data in last page
+    // buffer_flush();     // write the data in last page
     buffer_end();
 	return true;
 }
