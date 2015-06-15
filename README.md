@@ -10,3 +10,10 @@
   
 3.find A = value   
   A为键名，value为键值，找出所有包含A = value的json数据并显示
+
+## 下载使用
+git clone https://github.com/zhushh/DatabaseSystem
+
+cd DatabaseSystem/ && make
+
+cd ./bin && ./app
