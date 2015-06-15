@@ -13,7 +13,7 @@
 
 // the KEY_TYPE is useful for catalog file
 enum KEY_TYPE {
-    INT, BOOL, STRING, NESTEDOBJ, NESTEDARR, NESTEDINT, NESTEDSTR
+    INT, BOOL, STRING, NESTEDOBJ, NESTEDARR, NESTEDINT, NESTEDSTR, UNKNOWN
 };
 
 // define the Catalog_data

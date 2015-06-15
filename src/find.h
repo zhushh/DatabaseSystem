@@ -22,8 +22,6 @@
 #include "record_data.h"    // for struct _Record
 #include "show_data.h"      // for show_record function
 
-static Catalog *find_ctlog = Catalog::getCatalogInstance();
-
 bool find_binsearch_id(int id, Vector<Catalog_data> &v) {
     int st = 0, ed = v.size() - 1;
     while (st <= ed) {
@@ -39,15 +37,17 @@ bool find_binsearch_id(int id, Vector<Catalog_data> &v) {
     return false;
 }
 
-bool is_equal(const void *a, const void *b) {
+bool find_is_equal(const char *key, const char *value, const char *data) {
+    // to-do
     return true;
 }
 
-void find(const char *key, const char *value) {
+void find(const char *key, const char *value, KEY_TYPE type) {
     int count = 1;
+    Catalog *instance = Catalog::getCatalogInstance();
     Vector<Catalog_data> vv;
     // the find function will return the increasing catalog data sorted by id
-    find_ctlog->find(key, vv);
+    instance->find(key, vv);
     if (vv.size() == 0) {
         printf("NONE\n");
     } else {
@@ -71,7 +71,7 @@ void find(const char *key, const char *value) {
             buffer_read(&(t.len), sizeof(t.len));
             buffer_read(t.data, t.len);
             if (isFound) {
-                if (is_equal(value, t.data+t.offs[index])) {
+                if (find_is_equal(key, value, t.data+t.offs[index])) {
                     printf("%d\t\n", count++);
                     show_record(t);
                 }

@@ -11,19 +11,18 @@
 #include "catalog.h"
 
 #define STR_MAXSIZE 4096
-// get catalog instance handler
-static Catalog *insert_ctlog = Catalog::getCatalogInstance();
 
 // 将一条记录转换成Record格式
 void changeToRecord(const char *src, Record &t) {
 	char key[100];
 	KEY_TYPE type;
+	Catalog *instance = Catalog::getCatalogInstance();
 	int i = 0;
 	while (src[i] != '\0') {
 		if (src[i] == '\"') {
 			i += extract_key(src, key, i);
 			i += extract_type(src, type, i);
-			int key_id = insert_ctlog->create(key, type);	// create new catalog data
+			int key_id = instance->create(key, type);	// create new catalog data
 			t.attrNum++;
 			t.aids.push_back(key_id);
 			t.offs.push_back(t.len);

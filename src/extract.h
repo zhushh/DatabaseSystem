@@ -7,6 +7,7 @@
 #include <ctype.h>
 
 #include "catalog.h"
+#include "record_data.h"
 
 #ifndef MEMPCPY_FROM_MEMCPY
 #define MEMPCPY_FROM_MEMCPY
@@ -77,7 +78,7 @@ int extract_bool(const char* src, char *dest, int &curp, int st) {
 	}
 	curp += sizeof(char);
 	if (src[i] == ',') i++;
-	if (src[i] == '}') i++;
+	//if (src[i] == '}') i++;
 	return i - st;
 }
 
@@ -91,7 +92,7 @@ int extract_string(const char *src, char *dest, int &curp, int st) {
 	}
 	if (src[i] == '\"') i++;
 	if (src[i] == ',') i++;
-	if (src[i] == '}') i++;
+	//if (src[i] == '}') i++;
 	return i - st;
 }
 
@@ -105,18 +106,61 @@ int extract_nested_arr(const char *src, char *dest, int &curp, int st) {
 	}
 	if (src[i] == ']') i++;
 	if (src[i] == ',') i++;
-	if (src[i] == '}') i++;
+	//if (src[i] == '}') i++;
 	return i - st;
 }
 
+// 这里实际上可以使用insert.h里面的changeToRecord进行递归使用
 int extract_nested_obj(const char *src, char *dest, int &curp, int st) {
+	Record tt;
+	tt.attrNum = tt.len = 0;
+	char key[100];
+	KEY_TYPE type;
+	Catalog *instance = Catalog::getCatalogInstance();
 	int i = st;
 	while (isblank(src[i]) || src[i] == ':') i++;
 	if (src[i] == '{') i++;
 	while (src[i] != '}') {
-		*dest++ = src[i++];
-		curp++;
+//		*dest++ = src[i++];
+//		curp++;
+		if (src[i] == '\"') {
+			i += extract_key(src, key, i);
+			while (isblank(src[i]) || src[i] == ':') i++;	// skip blank and ':'
+			if (src[i] == '\"') {
+				type = NESTEDSTR;
+			} else if (isdigit(src[i])) {
+				type = NESTEDINT;
+			} else {
+				type = UNKNOWN;
+			}
+			int key_id = instance->create(key, type);
+			tt.attrNum++;
+			tt.aids.push_back(key_id);
+			tt.offs.push_back(tt.len);
+			if (type == NESTEDINT) {
+				i += extract_int(src, tt.data+tt.len, tt.len, i);
+			} else {
+				i += extract_string(src, tt.data+tt.len, tt.len, i);
+			}
+		} else {
+			i++;
+		}
 	}
+	dest = mempcpy(dest, &(tt.attrNum), sizeof(tt.attrNum));
+	curp += sizeof(tt.attrNum);
+	int k;
+	for (k = 0; k < tt.attrNum; k++) {
+		dest = mempcpy(dest, &(tt.aids[k]), sizeof(int));
+		curp += sizeof(int);
+	}
+	for (k = 0; k < tt.attrNum; k++) {
+		dest = mempcpy(dest, &(tt.offs[k]), sizeof(int));
+		curp += sizeof(int);
+	}
+	dest = mempcpy(dest, &(tt.len), sizeof(tt.len));
+	curp += sizeof(tt.len);
+	dest = mempcpy(dest, tt.data, tt.len);
+	curp += tt.len;
 	if (src[i] == '}') i++;
 	if (src[i] == ',') i++;
 	if (src[i] == '}') i++;

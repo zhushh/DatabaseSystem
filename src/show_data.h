@@ -5,14 +5,17 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "buffer.h"     	// for buffer_read
+//#include "buffer.h"     	// for buffer_read
 #include "record_data.h"    // for struct _Record
 #include "catalog.h"    	// for KEY_TYPE & Catalog_data info
 
-static Catalog *show_data_ctlog = Catalog::getCatalogInstance();
+//declare function
+void print_value(char *, KEY_TYPE, int);
+void show_record(Record &);
+void show_nested_obj(char *src);
 
-void print_value(const char *src, KEY_TYPE type, int size) {
-    if (type == INT) {
+void print_value(char *src, KEY_TYPE type, int size) {
+    if (type == INT || type == NESTEDINT) {
         int num;
         memcpy(&num, src, size);
         printf("%d", num);
@@ -24,7 +27,7 @@ void print_value(const char *src, KEY_TYPE type, int size) {
         } else {
             printf("false");
         }
-    } else if (type == STRING) {
+    } else if (type == STRING || type == NESTEDSTR) {
         putchar('\"');
         for (int i = 0; i < size; i++) {
             putchar(src[i]);
@@ -36,34 +39,58 @@ void print_value(const char *src, KEY_TYPE type, int size) {
             putchar(src[i]);
         }
         putchar(']');
-    } else if (type == NESTEDOBJ) {
-        putchar('{');
-        for (int i = 0; i < size; i++) {
-            putchar(src[i]);
-        }
-        putchar('}');
     }
 }
 
 void show_record(Record &t) {
+    Catalog *instance = Catalog::getCatalogInstance();
     putchar('{');
     int i;
     Catalog_data dat;
     for (i = 0; i < t.attrNum; i++) {
-        show_data_ctlog->find(t.aids[i], dat);
+        instance->find(t.aids[i], dat);
         printf("\"%s\": ", dat.key_name);
         int size;
-        if (i < t.attrNum - 1) {
-            size = t.offs[i+1] - t.offs[i];
-            print_value(t.data + t.offs[i], dat.key_type, size);
-            putchar(',');
-            putchar(' ');
+        if (dat.key_type != NESTEDOBJ) {
+            if (i < t.attrNum - 1) {
+                size = t.offs[i+1] - t.offs[i];
+                print_value(t.data + t.offs[i], dat.key_type, size);
+                putchar(',');
+                putchar(' ');
+            } else if (NESTEDOBJ != dat.key_type) {
+                size = t.len - t.offs[i];
+                print_value(t.data + t.offs[i], dat.key_type, size);
+            }
         } else {
-            size = t.len - t.offs[i];
-            print_value(t.data + t.offs[i], dat.key_type, size);
+            Record tt;
+            char *src = t.data + t.offs[i];
+            int num, k;
+            memcpy(&(tt.attrNum), src, sizeof(int));
+            src += sizeof(int);
+            for (k = 0; k < tt.attrNum; k++) {
+                memcpy(&num, src, sizeof(int));
+                tt.aids.push_back(num);
+                src += sizeof(int);
+                // printf("aid[%d] = %d, ", k, num);
+            }
+            for (k = 0; k < tt.attrNum; k++) {
+                memcpy(&num, src, sizeof(int));
+                tt.offs.push_back(num);
+                src += sizeof(int);
+                // printf("offs[%d] = %d, ", k, num);
+            }
+            memcpy(&(tt.len), src, sizeof(int));
+            // printf("len == %d", tt.len);
+            src += sizeof(int);
+            memcpy(tt.data, src, tt.len);
+            show_record(tt);
+            if (i < t.attrNum - 1) {
+                putchar(',');
+                putchar(' ');
+            }
         }
     }
-    printf("}\n");
+    printf("}");
 }
 
 #endif

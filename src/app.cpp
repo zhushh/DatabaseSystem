@@ -44,13 +44,13 @@ void startShow() {
 	showHelp();
 }
 
-bool read_key_name_and_value(char *name, char *value);
+bool read_key_name_and_value(char *, char *, KEY_TYPE &);
 
 int main(int argc, char **argv) {
-	char cmd[50];
+	char cmd[100];
 	char filename[NAMESIZE];
 	char keyName[100];
-	char keyValue[100];
+	char keyValue[1024];
 	Catalog *catalog = Catalog::getCatalogInstance();	// read/create catalog
 	startShow();
 	printf(">> ");
@@ -69,10 +69,11 @@ int main(int argc, char **argv) {
 			scanf("%s", filename);
 			showCatalog();
 		} else if (strncmp("find", cmd, sizeof("find")) == 0) {
-			if (!read_key_name_and_value(keyName, keyValue)) {
+			KEY_TYPE type;
+			if (!read_key_name_and_value(keyName, keyValue, type)) {
 				printf("Invalid command!\n");
 			} else {
-                find(keyName, keyValue);
+                find(keyName, keyValue, type);
 			}
 		} else if (strncmp("json", cmd, sizeof("json")) == 0) {
 			recovery_data();	// just recovery all the data
@@ -85,7 +86,7 @@ int main(int argc, char **argv) {
     return 0;
 }
 
-bool read_key_name_and_value(char *name, char *value) {
+bool read_key_name_and_value(char *name, char *value, KEY_TYPE &type) {
 	char ch;
 	// read key name
 	while (isblank((ch = getchar())));	// skip blank 
@@ -112,7 +113,11 @@ bool read_key_name_and_value(char *name, char *value) {
 	if (ch != '=') return false;
 	// read value
 	while (isblank(ch = getchar()));
-	if (ch == '\"') {
+	if (ch == '{') {
+		// to-do
+	} else if (ch == '[') {
+		// to-do
+	} else if (ch == '\"') {
 		while ((ch = getchar()) != '\"' && ch != '\n') {
 			*value++ = ch;
 		}

@@ -33,6 +33,7 @@ void recovery_data() {
         buffer_read(t.data, t.len);
         printf("%d\t", count++);
         show_record(t);
+        putchar('\n');
         t.attrNum = t.len = 0;
         t.aids.clear();
         t.offs.clear();
