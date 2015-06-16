@@ -71,7 +71,7 @@ int extract_int(const char *src, char *dest, int &curp, int st) {
 
 int extract_bool(const char* src, char *dest, int &curp, int st) {
 	int i = st;
-	char ch;
+	char ch = ' ';
 	char value[10];
 	while (isblank(src[i]) || src[i] == ':') i++;	// skip blank and ':'
 	if (src[i] == '\'' || src[i] == '\"') {
