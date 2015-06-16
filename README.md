@@ -21,30 +21,32 @@ cd ./bin && ./app
 ### 说明
 1.首先是帮助命令,直接在提示符'>> '后面输入'help'或者'?',就会出现跟刚登录时出现的那个命令说明命令;例如:
 
->> help
+<pre>>> help</pre>
+
+<pre>>> ?</pre>
 
 2.在temp目录中有可以导入的json数据,运行app后可使用insert命令把数据导入;例如:
 
->> insert ../temp/nobench\_data.json
+<pre>>> insert ../temp/nobench\_data.json</pre>
 
 3.然后可以使用check catalog来查看此时catalog是否已经生成,例如:
 
->> check catalog
+<pre>>> check catalog</pre>
 
 4.再使用showJson命令可以查看复原为Json的数据,例如:
 
->> showJson
+<pre>>> showJson</pre>
 
 5.如果想要根据某些条件来查找数据,就使用find命令,例如:
 
->> find dyn2 = true
+<pre>>> find dyn2 = true</pre>
 
->> find dyn1 = 46608
+<pre>>> find dyn1 = 46608</pre>
 
->> find nested\_obj.num = 8220
+<pre>>> find nested\_obj.num = 8220</pre>
 
->> find bool = false
+<pre>>> find bool = false</pre>
 
->> find bool = "true"
+<pre>>> find bool = "true"</pre>
 
->> find str1 = "GBRDCMBRGAYTAMJQGEYTCMJRGAYTCMI="
+<pre>>> find str1 = "GBRDCMBRGAYTAMJQGEYTCMJRGAYTCMI="</pre>
