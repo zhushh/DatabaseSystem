@@ -50,3 +50,9 @@ cd ./bin && ./app
 <pre>>> find bool = "true"</pre>
 
 <pre>>> find str1 = "GBRDCMBRGAYTAMJQGEYTCMJRGAYTCMI="</pre>
+
+6.内嵌有调用简单的不带参数的系统命令,例如:
+
+<pre>>> ls</pre>
+
+<pre>>> date</pre>
