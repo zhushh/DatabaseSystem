@@ -118,6 +118,13 @@ printf("key name = %s\n", key);
         return false;
     }
     if (find_get_value_and_type(value, type, size)) {
+        // reset type
+        if (aids.size() > 0 && type == INT) {
+            type = NESTEDINT;
+        } else if (aids.size() > 0 && type == STRING) {
+            type = NESTEDSTR;
+        }
+        // check exist
         if (catalog->find(key, type, dat)) {
             aids.push_back(dat.id);
         } else {
