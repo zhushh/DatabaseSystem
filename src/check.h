@@ -41,20 +41,33 @@ char* check_get_type_name(KEY_TYPE type) {
 }
 
 void showCatalog() {
+	getchar();
 	Catalog *instance = Catalog::getCatalogInstance();
 	Vector<Catalog_data> v;
 	instance->find(v);
 
 	printf("%10s|%20s|%12s|%10s\n", "ID", "KEY_NAME", "KEY_TYPE", "COUNT");
-	int i = 55;
-	while (i-- > 0) putchar('-');
+	int k = 55;
+	while (k-- > 0) putchar('-');
 	putchar('\n');
 	int size = v.size();
+	int i;
 	for (i = 0; i < size; i++) {
 		printf("%10d", v[i].id);
 		printf("%20s", v[i].key_name);
 		printf("%12s", check_get_type_name(v[i].key_type));
 		printf("%10d\n", v[i].count);
+		if ((i+1) % 36 == 0) {
+			char continue_read;
+			printf("Press Enter to continue reading and 'q' to end reading!\n");
+			while ((continue_read = getchar()) != '\n' && continue_read != 'q');
+			if (continue_read == 'q') break;    // quit read data
+			putchar('\n');
+			printf("%10s|%20s|%12s|%10s\n", "ID", "KEY_NAME", "KEY_TYPE", "COUNT");
+			int k = 55;
+			while (k-- > 0) putchar('-');
+			putchar('\n');
+		}
 	}
 	if (size == 0) {
 		printf("NONE\n");

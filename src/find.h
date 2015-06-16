@@ -212,6 +212,17 @@ void find(const Vector<int> &ids, const void *value, int size) {
                 printf("%d\t", count++);
                 show_record(t);
                 putchar('\n');
+                // just control the output for readable!!
+                // using the buffer's benifit to reduce calculate
+                // 缓冲技术的使用,只在用户想要继续看数据的时候才继续读取数据
+                if (count % 9 == 0) {
+                    char continue_read;
+                    printf("Press Enter to continue reading and 'q' to end reading!\n");
+                    while ((continue_read = getchar()) != '\n' && continue_read != 'q');
+                    if (continue_read == 'q') break;    // quit read data
+                    putchar('\n');
+                    putchar('\n');
+                }
             }
         } else if (buffer_skip(t.len) < 0) {
             fprintf(stderr, "Error, find, call buffer_skip fail!\n");

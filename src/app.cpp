@@ -67,6 +67,7 @@ int main(int argc, char **argv) {
 			insert(filename);
 		} else if (strncmp("check", cmd, sizeof("check")) == 0) {
 			scanf("%s", filename);
+			getchar();		// skip '\n' before call function
 			showCatalog();
 		} else if (strncmp("find", cmd, sizeof("find")) == 0) {
 			int size;
@@ -77,7 +78,8 @@ int main(int argc, char **argv) {
 			} else {
 				printf("Invalid!\n");
 			}
-		} else if (strncmp("showJson", cmd, sizeof("json")) == 0) {
+		} else if (strncmp("showJson", cmd, sizeof("showJson")) == 0) {
+			getchar();		// skip '\n'
 			recovery_data();	// just recovery all the data
 		} else {
             system(cmd);	// try to call system command

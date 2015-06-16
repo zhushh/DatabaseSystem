@@ -12,6 +12,10 @@
 
 #define STR_MAXSIZE 4096
 
+void changeToRecord(const char*, Record&);
+void writeRecordToBuffer(Record&);
+bool insert(const char*);
+
 // 将一条记录转换成Record格式
 void changeToRecord(const char *src, Record &t) {
 	char key[100];

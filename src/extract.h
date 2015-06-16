@@ -15,6 +15,15 @@
 (memcpy((a), (b), (c)) != NULL? (a)+(c) : (a))
 #endif
 
+//declare function
+int extract_key(const char*, char*, int);
+int extract_type(const char*, KEY_TYPE&, int);
+int extract_int(const char*, char*, int&, int);
+int extract_bool(const char*, char*, int &, int);
+int extract_string(const char*, char*, int&, int);
+int extract_nested_arr(const char*, char*, int&, int);
+int extract_nested_obj(const char*, char*, int&, int);
+
 // 读取一个key name
 // 返回读取的个数
 int extract_key(const char *src, char *key, int st) {
@@ -76,8 +85,11 @@ int extract_bool(const char* src, char *dest, int &curp, int st) {
 	if (strncmp("true", value, sizeof("true")) == 0) {
 		char boolean = 'T';
 		dest = mempcpy(dest, &boolean, sizeof(char));
-	} else {
+	} else if (strncmp("false", value, sizeof("false")) == 0) {
 		char boolean = 'F';
+		dest = mempcpy(dest, &boolean, sizeof(char));
+	} else {
+		char boolean = 'W';		// flag wrong bool value
 		dest = mempcpy(dest, &boolean, sizeof(char));
 	}
 	curp += sizeof(char);
