@@ -58,7 +58,6 @@ bool find_get_value_and_type(char *value, KEY_TYPE &type, int &size) {
         src[i++] = ch;
         while (!isblank((ch = getchar())) && ch != '\n') src[i++] = ch;
         src[i] = '\0';
-printf("src = %s\n", src);
         if (src[0] == '{') {
             type = NESTEDOBJ;
             extract_nested_obj(src, value, size, 0);
@@ -73,7 +72,6 @@ printf("src = %s\n", src);
                 type = BOOL;
                 extract_bool(src, value, size, 0);
             } else {
-printf("type set as string\n");
                 type = STRING;
                 extract_string(src, value, size, 0);
             }
@@ -89,7 +87,6 @@ printf("type set as string\n");
     } else {
         return false;
     }
-printf("type = %s\n", check_get_type_name(type));
     return true;
 }
 
@@ -107,7 +104,6 @@ bool find_get_arguments(Vector<int> &aids, char *value, int &size) {
             return false;
         }
     }
-printf("key name = %s\n", key);
     if (ch == '\n') {
         printf("Please input key value\n");
         return false;
@@ -206,7 +202,7 @@ void find(const Vector<int> &ids, const void *value, int size) {
                 show_record(t);
                 putchar('\n');
             }
-        } else if (buffer_skip((sizeof(int)*(t.attrNum+1) + t.len)) < 0) {
+        } else if (buffer_skip(t.len) < 0) {
             fprintf(stderr, "Error, find, call buffer_skip fail!\n");
             exit(1);
         }
