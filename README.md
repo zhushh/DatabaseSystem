@@ -53,6 +53,18 @@ cd ./bin && ./app
 
 6.内嵌有调用简单的不带参数的系统命令,例如:
 
+查看当前目录下的文件
+
 <pre>>> ls</pre>
 
+查看时间
+
 <pre>>> date</pre>
+
+查看登录用户
+
+<pre>>> who</pre>
+
+清屏
+
+<pre>>> clear</pre>
