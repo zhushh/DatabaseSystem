@@ -41,7 +41,6 @@ char* check_get_type_name(KEY_TYPE type) {
 }
 
 void showCatalog() {
-	getchar();
 	Catalog *instance = Catalog::getCatalogInstance();
 	Vector<Catalog_data> v;
 	instance->find(v);

@@ -34,7 +34,7 @@ void buffer_save();
 void buffer_write(const void*, int);
 bool buffer_read_page(int);
 bool buffer_read(void *, int);
-int buffer_skip(int);
+// int buffer_skip(int);
 
 // when using buffer, the buffer_start function must be called firstly.
 // And when finished using buffer, should call the buffer_end function.
@@ -167,24 +167,26 @@ bool buffer_read(void *dest, int size) {
     return true;
 }
 
-int buffer_skip(int size) {
-    if (!isReading || size < 0) {
-        return -1;
-    } else if (size + (bufptr - buffer) < PAGE_SIZE) {
-        bufptr += size;
-        return size;
-    } else {
-        int len = PAGE_SIZE - (bufptr - buffer);
-        size -= len;
-        int count = size / (PAGE_SIZE) + (size % (PAGE_SIZE) == 0? 0 : 1);
-        len += count * (PAGE_SIZE);
-        if (!buffer_read_page(current_page_num+count)) {
-            return -1;
-        }
-        bufptr += (size % (PAGE_SIZE));
-        len += (size % (PAGE_SIZE));
-        return len;
-    }
-}
+
+// has some bug!! don't use
+// int buffer_skip(int size) {
+//     if (!isReading || size < 0) {
+//         return -1;
+//     } else if (size + (bufptr - buffer) < PAGE_SIZE) {
+//         bufptr += size;
+//         return size;
+//     } else {
+//         int len = PAGE_SIZE - (bufptr - buffer);
+//         size -= len;
+//         int count = size / (PAGE_SIZE) + (size % (PAGE_SIZE) == 0? 0 : 1);
+//         len += count * (PAGE_SIZE);
+//         if (!buffer_read_page(current_page_num+count)) {
+//             return -1;
+//         }
+//         bufptr += (size % (PAGE_SIZE));
+//         len += (size % (PAGE_SIZE));
+//         return len;
+//     }
+// }
 
 #endif

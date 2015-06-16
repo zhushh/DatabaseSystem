@@ -176,8 +176,9 @@ void find(const Vector<int> &ids, const void *value, int size) {
             t.offs.push_back(num);
         }
         buffer_read(&(t.len), sizeof(t.len));
+        buffer_read(t.data, t.len);
         if (isFound) {
-            buffer_read(t.data, t.len);
+            // buffer_read(t.data, t.len);
             char *curptr = t.data + t.offs[index];
             int idsize = ids.size();
             // nested search id
@@ -224,10 +225,11 @@ void find(const Vector<int> &ids, const void *value, int size) {
                     putchar('\n');
                 }
             }
-        } else if (buffer_skip(t.len) < 0) {
-            fprintf(stderr, "Error, find, call buffer_skip fail!\n");
-            exit(1);
         }
+        // else if (buffer_skip(t.len) < 0) {
+        //    fprintf(stderr, "Error, find, call buffer_skip fail!\n");
+        //    exit(1);
+        //}
         t.attrNum = t.len = 0;
         t.aids.clear();
         t.offs.clear();
