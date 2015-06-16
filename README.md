@@ -27,7 +27,7 @@ cd ./bin && ./app
 
 2.在temp目录中有可以导入的json数据,运行app后可使用insert命令把数据导入;例如:
 
-<pre>>> insert ../temp/nobench\_data.json</pre>
+<pre>>> insert ../temp/nobench_data.json</pre>
 
 3.然后可以使用check catalog来查看此时catalog是否已经生成,例如:
 
@@ -43,7 +43,7 @@ cd ./bin && ./app
 
 <pre>>> find dyn1 = 46608</pre>
 
-<pre>>> find nested\_obj.num = 8220</pre>
+<pre>>> find nested_obj.num = 8220</pre>
 
 <pre>>> find bool = false</pre>
 
