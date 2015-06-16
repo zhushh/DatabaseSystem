@@ -62,8 +62,12 @@ int extract_int(const char *src, char *dest, int &curp, int st) {
 
 int extract_bool(const char* src, char *dest, int &curp, int st) {
 	int i = st;
+	char ch;
 	char value[10];
 	while (isblank(src[i]) || src[i] == ':') i++;	// skip blank and ':'
+	if (src[i] == '\'' || src[i] == '\"') {
+		ch = src[i++];
+	}
 	int j = 0;
 	while (isalpha(src[i])) {
 		value[j++] = src[i++];
@@ -77,6 +81,7 @@ int extract_bool(const char* src, char *dest, int &curp, int st) {
 		dest = mempcpy(dest, &boolean, sizeof(char));
 	}
 	curp += sizeof(char);
+	if (src[i] == ch) i++;
 	if (src[i] == ',') i++;
 	//if (src[i] == '}') i++;
 	return i - st;
@@ -84,13 +89,16 @@ int extract_bool(const char* src, char *dest, int &curp, int st) {
 
 int extract_string(const char *src, char *dest, int &curp, int st) {
 	int i = st;
+	char ch;
 	while (isblank(src[i]) || src[i] == ':') i++;
-	if (src[i] == '\"') i++;
-	while (src[i] != '\"' && src[i] != '\0') {
+	if (src[i] == '\"' || src[i] == '\'') {
+		ch = src[i++];
+	}
+	while (src[i] != ch && src[i] != '\0') {
 		*dest++ = src[i++];
 		curp++;
 	}
-	if (src[i] == '\"') i++;
+	if (src[i] == ch) i++;
 	if (src[i] == ',') i++;
 	//if (src[i] == '}') i++;
 	return i - st;
@@ -121,12 +129,10 @@ int extract_nested_obj(const char *src, char *dest, int &curp, int st) {
 	while (isblank(src[i]) || src[i] == ':') i++;
 	if (src[i] == '{') i++;
 	while (src[i] != '}') {
-//		*dest++ = src[i++];
-//		curp++;
 		if (src[i] == '\"') {
 			i += extract_key(src, key, i);
 			while (isblank(src[i]) || src[i] == ':') i++;	// skip blank and ':'
-			if (src[i] == '\"') {
+			if (src[i] == '\"') {			// get type
 				type = NESTEDSTR;
 			} else if (isdigit(src[i])) {
 				type = NESTEDINT;

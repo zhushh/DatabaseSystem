@@ -6,6 +6,7 @@
 *************************************************************************/
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
 
@@ -44,12 +45,10 @@ void startShow() {
 	showHelp();
 }
 
-bool read_key_name_and_value(char *, char *, KEY_TYPE &);
-
 int main(int argc, char **argv) {
 	char cmd[100];
 	char filename[NAMESIZE];
-	char keyName[100];
+	//char keyName[100];
 	char keyValue[1024];
 	Catalog *catalog = Catalog::getCatalogInstance();	// read/create catalog
 	startShow();
@@ -69,11 +68,13 @@ int main(int argc, char **argv) {
 			scanf("%s", filename);
 			showCatalog();
 		} else if (strncmp("find", cmd, sizeof("find")) == 0) {
-			KEY_TYPE type;
-			if (!read_key_name_and_value(keyName, keyValue, type)) {
-				printf("Invalid command!\n");
+			int size;
+			Vector<int> aids;
+			if (find_get_arguments(aids, keyValue, size)) {
+				find(aids, keyValue, size);
+				putchar('\n');
 			} else {
-                find(keyName, keyValue, type);
+				printf("Invalid!\n");
 			}
 		} else if (strncmp("json", cmd, sizeof("json")) == 0) {
 			recovery_data();	// just recovery all the data
@@ -84,58 +85,4 @@ int main(int argc, char **argv) {
 	}
 	delete catalog;		// write catalog to file catalog for next time using.
     return 0;
-}
-
-bool read_key_name_and_value(char *name, char *value, KEY_TYPE &type) {
-	char ch;
-	// read key name
-	while (isblank((ch = getchar())));	// skip blank 
-	if (ch == '\"') {
-		while ((ch = getchar()) != '\"' && ch != '\n') {
-			*name++ = ch;
-		}
-		*name = '\0';
-	} else if (ch == '\'') {
-		while ((ch = getchar()) != '\'' && ch != '\n') {
-			*name++ = ch;
-		}
-		*name = '\0';
-	} else if (ch != '\n') {
-		*name++ = ch;
-		while (!isblank((ch = getchar())) && ch != '=' && ch != '\n') {
-			*name++ = ch;
-		}
-		*name = '\0';
-	}
-	// check
-	if (ch == '\n') return false;
-	if (ch != '=') while (isblank((ch = getchar())));
-	if (ch != '=') return false;
-	// read value
-	while (isblank(ch = getchar()));
-	if (ch == '{') {
-		// to-do
-	} else if (ch == '[') {
-		// to-do
-	} else if (ch == '\"') {
-		while ((ch = getchar()) != '\"' && ch != '\n') {
-			*value++ = ch;
-		}
-		*value = '\0';
-	} else if (ch == '\'') {
-		while ((ch = getchar()) != '\'' && ch != '\n') {
-			*value++ = ch;
-		}
-		*value = '\0';
-	} else if (ch != '\n') {
-		*value++ = ch;
-		while (!isblank((ch = getchar())) && ch != '\n') {
-			*value++ = ch;
-		}
-		*value = '\0';
-	} else {
-		return false;
-	}
-	while (ch != '\n') ch = getchar();
-	return true;
 }

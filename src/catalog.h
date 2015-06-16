@@ -17,6 +17,7 @@ enum KEY_TYPE {
 };
 
 // define the Catalog_data
+// key_name + key_type as super key
 typedef struct _Catalog_data {
     int id;
     char key_name[50];
