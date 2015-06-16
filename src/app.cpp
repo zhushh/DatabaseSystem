@@ -35,6 +35,7 @@ void showHelp() {
 	printf("\tcheck catalog -- print catalog file\n");
 	printf("\tinsert file   -- load the `file' data into database system\n");
 	printf("\tfind A = B    -- find the data whose key A has value as B\n");
+	printf("\tshowJson      -- print all data with Json format.\n");
 	printf("---------------------------------------------------------------\n");
 }
 
@@ -76,7 +77,7 @@ int main(int argc, char **argv) {
 			} else {
 				printf("Invalid!\n");
 			}
-		} else if (strncmp("json", cmd, sizeof("json")) == 0) {
+		} else if (strncmp("showJson", cmd, sizeof("json")) == 0) {
 			recovery_data();	// just recovery all the data
 		} else {
             system(cmd);	// try to call system command

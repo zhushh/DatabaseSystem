@@ -24,6 +24,17 @@
 #include "show_data.h"      // for show_record function
 #include "check.h"          // for debug to output type name
 
+// declare function
+char find_get_key(char *);
+bool find_get_value_and_type(char *, KEY_TYPE &, int &);
+// get the arguments for finding
+bool find_get_arguments(Vector<int> &, char *, int &);
+// compare the bytes to check if they is equal
+bool find_compare(const void *, const void *, int);
+// utility function supporting finding nested_obj's key
+void find(const Vector<int> &, const void *, int);
+
+// start definition
 char find_get_key(char *key) {
     char ch;
     // read key name
