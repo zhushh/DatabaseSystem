@@ -73,8 +73,14 @@ bool find_get_value_and_type(char *value, KEY_TYPE &type, int &size) {
             type = NESTEDOBJ;
             extract_nested_obj(src, value, size, 0);
         } else if (src[0] == '[') {
+            src[i++] = ch;
+            while ((ch = getchar()) != '\n') {
+                src[i++] = ch;
+            }
+            src[i] = '\0';
             type = NESTEDARR;
             extract_nested_arr(src, value, size, 0);
+            value[size] = '\0';
         } else if (src[0] == '\"' || src[0] == '\'') {
             if (strncmp("\"true\"", src, sizeof("\"true\"")) == 0) {
                 type = BOOL;
