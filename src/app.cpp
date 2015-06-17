@@ -28,15 +28,18 @@ typedef enum bool {
 const int NAMESIZE = 1024;
 
 void showHelp() {
-	printf("---------------------------------------------------------------\n");
+	printf("-------------------------------------------------------------------\n");
 	printf("\thelp          -- print manual.\n");
 	printf("\t ?            -- print manual\n");
-	printf("\texit          -- exit application\n");
 	printf("\tcheck catalog -- print catalog file\n");
 	printf("\tinsert file   -- load the `file' data into database system\n");
 	printf("\tfind A = B    -- find the data whose key A has value as B\n");
 	printf("\tshowJson      -- print all data with Json format.\n");
-	printf("---------------------------------------------------------------\n");
+	printf("\texit          -- exit application\n");
+	printf("\tls            -- list current directory files\n");
+	printf("\tclear         -- clear screen\n");
+	printf("\tdate          -- show current date\n");
+	printf("-------------------------------------------------------------------\n");
 }
 
 void startShow() {

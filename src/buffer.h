@@ -34,7 +34,7 @@ void buffer_save();
 void buffer_write(const void*, int);
 bool buffer_read_page(int);
 bool buffer_read(void *, int);
-// int buffer_skip(int);
+//int buffer_skip(int);
 
 // when using buffer, the buffer_start function must be called firstly.
 // And when finished using buffer, should call the buffer_end function.

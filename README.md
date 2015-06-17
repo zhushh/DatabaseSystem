@@ -57,6 +57,10 @@ cd ./bin && ./app
 
 <pre>>> ls</pre>
 
+清屏
+
+<pre>>> clear</pre>
+
 查看时间
 
 <pre>>> date</pre>
@@ -64,7 +68,3 @@ cd ./bin && ./app
 查看登录用户
 
 <pre>>> who</pre>
-
-清屏
-
-<pre>>> clear</pre>

@@ -86,6 +86,7 @@ bool insert(const char *filename) {
 		}
 	}
     buffer_end();		// must call when finishing using buffer
+    fclose(fp);
 	return true;
 }
 
