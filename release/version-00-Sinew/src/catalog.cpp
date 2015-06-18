@@ -1,14 +1,8 @@
-/*************************************************************************
- > File Name: catalog.c
- > Author: zhushh
- > Mail: 
- > Created Time: Mon 08 Jun 2015 02:03:58 PM CST
- ************************************************************************/
-
 #ifndef CATALOG_CPP
 #define CATALOG_CPP
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include "catalog.h"
 
@@ -134,9 +128,13 @@ Catalog::Catalog() {
 
 bool Catalog::readFromFile(const char *src_file) {
 	FILE *fp;
-	if ((fp = fopen(src_file, "r+")) == NULL) {
-		//fprintf(stderr, "%s can't open!\n", src_file);
-		return false;
+	if ((fp = fopen(src_file, "rb+")) == NULL) {
+		// do not exist src_file, then create one
+		if ((fp = fopen(src_file, "wb+")) == NULL) {
+			fprintf(stderr, "%s can't create!\n", src_file);
+			exit(1);
+		}
+		return false;	// return false to flag there is no catalog data
 	} else {
 		Catalog_data dat;
 		while (fread(&dat, sizeof(dat), 1, fp)) {
@@ -150,7 +148,7 @@ bool Catalog::readFromFile(const char *src_file) {
 
 bool Catalog::writeToFile(const char *src_file) {
 	FILE *fp;
-	if ((fp = fopen(src_file, "w+")) == NULL) {
+	if ((fp = fopen(src_file, "wb+")) == NULL) {
 		fprintf(stderr, "%s can't open!\n", src_file);
 		return false;
 	} else {

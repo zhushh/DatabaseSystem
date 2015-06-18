@@ -48,7 +48,9 @@ void show_record(Record &t) {
     int i;
     Catalog_data dat;
     for (i = 0; i < t.attrNum; i++) {
-        instance->find(t.aids[i], dat);
+        if (instance->find(t.aids[i], dat)) {
+            continue;   // skip unknown key
+        }
         printf("\"%s\": ", dat.key_name);
         int size;
         if (dat.key_type != NESTEDOBJ) {

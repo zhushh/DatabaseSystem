@@ -1,14 +1,8 @@
-/*************************************************************************
- > File Name: app.cpp
- > Author: zhushh
- > Mail: 
- > Created Time: Mon 08 Jun 2015 02:51:53 PM CST
-*************************************************************************/
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
+#include <time.h>       // for test the query time
 
 #include "vector.h"
 #include "check.h"
@@ -71,7 +65,9 @@ int main(int argc, char **argv) {
 		} else if (strncmp("check", cmd, sizeof("check")) == 0) {
 			scanf("%s", filename);
 			getchar();		// skip '\n' before call function
-			showCatalog();
+			if (strncmp("catalog", filename, sizeof("catalog")) == 0) {
+				showCatalog();
+			}
 		} else if (strncmp("find", cmd, sizeof("find")) == 0) {
 			int size;
 			Vector<int> aids;

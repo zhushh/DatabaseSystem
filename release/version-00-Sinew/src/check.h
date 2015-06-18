@@ -1,12 +1,5 @@
-/*************************************************************************
- > File Name: check.h
- > Author: zhushh
- > Mail: 
- > Created Time: Tue 02 Jun 2015 07:24:59 PM CST
- ************************************************************************/
-
-#ifndef _CHECK_H
-#define _CHECK_H
+#ifndef ZZ_CHECK_H
+#define ZZ_CHECK_H
 
 #include <stdio.h>
 #include <string.h>

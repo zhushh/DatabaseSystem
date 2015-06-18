@@ -1,10 +1,3 @@
-/*************************************************************************
- > File Name: find.h
- > Author: zhushh
- > Mail: 
- > Created Time: Tue 02 Jun 2015 07:25:33 PM CST
- ************************************************************************/
-
 #ifndef ZZ_FIND_H
 #define ZZ_FIND_H
 
@@ -21,7 +14,7 @@
 #include "buffer.h"         // for buffer function
 #include "record_data.h"    // for struct _Record
 #include "extract.h"        // for extract data
-#include "show_data.h"      // for show_record function
+#include "show_record.h"    // for show_record function
 #include "check.h"          // for debug to output type name
 
 // declare function
@@ -73,8 +66,14 @@ bool find_get_value_and_type(char *value, KEY_TYPE &type, int &size) {
             type = NESTEDOBJ;
             extract_nested_obj(src, value, size, 0);
         } else if (src[0] == '[') {
+            src[i++] = ch;
+            while ((ch = getchar()) != '\n') {
+                src[i++] = ch;
+            }
+            src[i] = '\0';
             type = NESTEDARR;
             extract_nested_arr(src, value, size, 0);
+            value[size] = '\0';
         } else if (src[0] == '\"' || src[0] == '\'') {
             if (strncmp("\"true\"", src, sizeof("\"true\"")) == 0) {
                 type = BOOL;
@@ -178,7 +177,7 @@ void find(const Vector<int> &ids, const void *value, int size) {
         buffer_read(&(t.len), sizeof(t.len));
         buffer_read(t.data, t.len);
         if (isFound) {
-            //buffer_read(t.data, t.len);
+            // buffer_read(t.data, t.len);
             char *curptr = t.data + t.offs[index];
             int idsize = ids.size();
             // nested search id
@@ -216,14 +215,14 @@ void find(const Vector<int> &ids, const void *value, int size) {
                 // just control the output for readable!!
                 // using the buffer's benifit to reduce calculate
                 // 缓冲技术的使用,只在用户想要继续看数据的时候才继续读取数据
-                if (count % 9 == 0) {
-                    char continue_read;
-                    printf("Press Enter to continue reading and 'q' to end reading!\n");
-                    while ((continue_read = getchar()) != '\n' && continue_read != 'q');
-                    if (continue_read == 'q') break;    // quit read data
-                    putchar('\n');
-                    putchar('\n');
-                }
+                // if (count % 9 == 0) {
+                //     char continue_read;
+                //     printf("Press Enter to continue reading and 'q' to end reading!\n");
+                //     while ((continue_read = getchar()) != '\n' && continue_read != 'q');
+                //     if (continue_read == 'q') break;    // quit read data
+                //     putchar('\n');
+                //     putchar('\n');
+                // }
             }
         }
         // else if (buffer_skip(t.len) < 0) {

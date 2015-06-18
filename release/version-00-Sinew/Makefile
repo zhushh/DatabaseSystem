@@ -8,7 +8,7 @@ OBJ = $(patsubst %.cpp,$(DIR_OBJ)/%.o,$(notdir $(SRC)))
 TARGET = app
 BIN_TARGET = $(DIR_BIN)/$(TARGET)
 CC = g++
-CFLAGS = -g -Wall -I$(DIR_SRC)
+CFLAGS = -g -Wall -O3 -I$(DIR_SRC)
 
 $(BIN_TARGET): $(OBJ)
 	$(CC) $(OBJ) -o $@

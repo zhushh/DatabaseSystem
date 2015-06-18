@@ -1,5 +1,5 @@
-#ifndef INSERT_H
-#define INSERT_H
+#ifndef ZZ_INSERT_H
+#define ZZ_INSERT_H
 
 #include <stdio.h>
 #include <string.h>

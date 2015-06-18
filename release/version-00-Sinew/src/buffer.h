@@ -1,9 +1,3 @@
-/*************************************************************************
- > File Name: buffer.h
- > Author: zhushh
- > Mail: 
- > Created Time: Fri 12 Jun 2015 08:37:03 PM CST
- ************************************************************************/
 #ifndef ZZ_BUFFER_H
 #define ZZ_BUFFER_H
 
@@ -34,7 +28,7 @@ void buffer_save();
 void buffer_write(const void*, int);
 bool buffer_read_page(int);
 bool buffer_read(void *, int);
-//int buffer_skip(int);
+// int buffer_skip(int);
 
 // when using buffer, the buffer_start function must be called firstly.
 // And when finished using buffer, should call the buffer_end function.
@@ -86,7 +80,7 @@ void buffer_save() {
     } else if (bufptr != buffer) {
     	int clear_size = PAGE_SIZE - (bufptr - buffer);
     	while (clear_size-- > 0) {
-    		bufptr[clear_size] ^= bufptr[clear_size];
+    		bufptr[clear_size] ^= bufptr[clear_size];     // 清零
     	}
     	fseek(fp, ((bufend - buffer) - PAGE_SIZE), SEEK_END);
         if (fwrite(buffer, PAGE_SIZE, 1, fp) != 1) {

@@ -1,11 +1,5 @@
-/*************************************************************************
- > File Name: recovery_data.h
- > Author: zhushh
- > Mail: 
- > Created Time: Fri 12 Jun 2015 11:18:32 PM CST
- ************************************************************************/
-#ifndef _RECOVERY_DATA_H
-#define _RECOVERY_DATA_H
+#ifndef ZZ_RECOVERY_DATA_H
+#define ZZ_RECOVERY_DATA_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,7 +7,7 @@
 
 #include "buffer.h"         // for buffer_read
 #include "record_data.h"    // for struct _Record
-#include "show_data.h"      // for show_record function
+#include "show_record.h"    // for show_record function
 
 void recovery_data() {
     int count = 1;

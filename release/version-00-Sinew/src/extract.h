@@ -1,5 +1,5 @@
-#ifndef EXTRACT_H
-#define EXTRACT_H
+#ifndef ZZ_EXTRACT_H
+#define ZZ_EXTRACT_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -101,7 +101,7 @@ int extract_bool(const char* src, char *dest, int &curp, int st) {
 
 int extract_string(const char *src, char *dest, int &curp, int st) {
 	int i = st;
-	char ch;
+	char ch = '\"';
 	while (isblank(src[i]) || src[i] == ':') i++;
 	if (src[i] == '\"' || src[i] == '\'') {
 		ch = src[i++];
